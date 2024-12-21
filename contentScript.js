@@ -9,6 +9,28 @@
     const value = parseFloat(sbgGradeText.innerHTML.split(': ')[1]);
     sbgGradeText.innerHTML = 'SBG Grade: ' + value;
 
+    const getLetterGrade = (percentage) => {
+      const gradeThresholds = {
+        "A": 93,
+        "A-": 90,
+        "B+": 87,
+        "B": 83,
+        "B-": 80,
+        "C+": 77,
+        "C": 73,
+        "C-": 70,
+        "D+": 67,
+        "D": 63,
+        "D-": 60,
+        "F": 0
+      };
+
+      for (const [grade, threshold] of Object.entries(gradeThresholds)) {
+        if (percentage >= threshold) return grade;
+      }
+      return "F";
+    };
+
     const midtermInput = document.createElement('div');
     const midtermSpan = document.createElement('span');
     const midtermGrade = localStorage.getItem('midterm-grade');
@@ -25,7 +47,8 @@
 
     const overallGrade = document.createElement('span');
     overallGrade.id = 'overall-grade';
-    overallGrade.innerHTML = 'Overall Grade: ' + ((value * 0.8 + (midtermInput.querySelector('#midterm-grade').value * 0.2)).toFixed(2));
+    const initialOverallGrade = (value * 0.8 + (midtermGrade || 0) * 0.2).toFixed(2);
+    overallGrade.innerHTML = `Overall Grade: ${initialOverallGrade}% (${getLetterGrade(initialOverallGrade)})`;
     overallGrade.setAttribute('ngcontent-orn-c175', '');
     overallGrade.style.display = 'inline-block';
     midtermInput.appendChild(overallGrade);
@@ -37,7 +60,7 @@
     progressBarContainer.style.backgroundColor = "#e0e0e0";
     progressBarContainer.style.borderRadius = "10px";
     progressBarContainer.style.position = "relative";
-    progressBarContainer.style.height = "20px";
+    progressBarContainer.style.height = "25px"; // Increased height for better readability
 
     const progressBar = document.createElement('div');
     const initialProgress = ((value * 0.8 + (midtermGrade || 0) * 0.2) / 100) * 100;
@@ -45,10 +68,13 @@
     progressBar.style.width = `${Math.min(initialProgress, 100)}%`;
     progressBar.style.backgroundColor = initialProgress >= 90 ? "#4caf50" : initialProgress >= 70 ? "#ffeb3b" : "#f44336";
     progressBar.style.borderRadius = "10px";
-    progressBar.textContent = `${initialProgress.toFixed(1)}%`;
+    progressBar.style.fontSize = "14px"; // Larger font size
+    progressBar.style.fontWeight = "bold";
+    progressBar.style.padding = "0 5px"; // Added padding for readability
     progressBar.style.color = "white";
     progressBar.style.textAlign = "center";
-    progressBar.style.lineHeight = "20px";
+    progressBar.style.lineHeight = "25px"; // Adjusted to match height
+    progressBar.textContent = `${initialProgress.toFixed(1)}%`;
 
     progressBarContainer.appendChild(progressBar);
     midtermInput.appendChild(progressBarContainer);
@@ -56,7 +82,7 @@
     midtermInput.querySelector('#midterm-grade').addEventListener('input', (event) => {
       const updatedMidtermGrade = midtermInput.querySelector('#midterm-grade').value || 0;
       const updatedOverallGrade = (value * 0.8 + updatedMidtermGrade * 0.2).toFixed(2);
-      overallGrade.innerHTML = 'Overall Grade: ' + updatedOverallGrade;
+      overallGrade.innerHTML = `Overall Grade: ${updatedOverallGrade}% (${getLetterGrade(updatedOverallGrade)})`;
 
       // Update progress bar
       const updatedProgress = (updatedOverallGrade / 100) * 100;
