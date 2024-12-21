@@ -203,7 +203,7 @@
 
     // Initial calculations
     calculateSafeGrade();
-    calculateTargetGrade();
+    calculateTargetGrade(); 
 
     // Add export button
     const exportButton = document.createElement('button');
