@@ -30,9 +30,42 @@
     overallGrade.style.display = 'inline-block';
     midtermInput.appendChild(overallGrade);
 
+    // Add progress bar
+    const progressBarContainer = document.createElement('div');
+    progressBarContainer.style.marginTop = "10px";
+    progressBarContainer.style.width = "100%";
+    progressBarContainer.style.backgroundColor = "#e0e0e0";
+    progressBarContainer.style.borderRadius = "10px";
+    progressBarContainer.style.position = "relative";
+    progressBarContainer.style.height = "20px";
+
+    const progressBar = document.createElement('div');
+    const initialProgress = ((value * 0.8 + (midtermGrade || 0) * 0.2) / 100) * 100;
+    progressBar.style.height = "100%";
+    progressBar.style.width = `${Math.min(initialProgress, 100)}%`;
+    progressBar.style.backgroundColor = initialProgress >= 90 ? "#4caf50" : initialProgress >= 70 ? "#ffeb3b" : "#f44336";
+    progressBar.style.borderRadius = "10px";
+    progressBar.textContent = `${initialProgress.toFixed(1)}%`;
+    progressBar.style.color = "white";
+    progressBar.style.textAlign = "center";
+    progressBar.style.lineHeight = "20px";
+
+    progressBarContainer.appendChild(progressBar);
+    midtermInput.appendChild(progressBarContainer);
+
     midtermInput.querySelector('#midterm-grade').addEventListener('input', (event) => {
-      overallGrade.innerHTML = 'Overall Grade: ' + ((value * 0.8 + (midtermInput.querySelector('#midterm-grade').value * 0.2)).toFixed(2));
-      localStorage.setItem('midterm-grade', midtermInput.querySelector('#midterm-grade').value);
+      const updatedMidtermGrade = midtermInput.querySelector('#midterm-grade').value || 0;
+      const updatedOverallGrade = (value * 0.8 + updatedMidtermGrade * 0.2).toFixed(2);
+      overallGrade.innerHTML = 'Overall Grade: ' + updatedOverallGrade;
+
+      // Update progress bar
+      const updatedProgress = (updatedOverallGrade / 100) * 100;
+      progressBar.style.width = `${Math.min(updatedProgress, 100)}%`;
+      progressBar.textContent = `${updatedOverallGrade}%`;
+      progressBar.style.backgroundColor = updatedProgress >= 90 ? "#4caf50" : updatedProgress >= 70 ? "#ffeb3b" : "#f44336";
+
+      // Save updated midterm grade
+      localStorage.setItem('midterm-grade', updatedMidtermGrade);
     });
 
     document.querySelector(".overall-grade-text").appendChild(midtermInput);
@@ -190,5 +223,14 @@
 
     // Add to DOM
     document.querySelector(".overall-grade-text").appendChild(targetGradeContainer);
+
+    // Add footer
+    const footer = document.createElement("footer");
+    footer.style.marginTop = "20px";
+    footer.style.fontSize = "12px";
+    footer.style.textAlign = "center";
+    footer.style.color = "#555";
+    footer.innerHTML = "Made by Grayson Anderson and Teddy Lampert";
+    document.querySelector(".overall-grade-text").appendChild(footer);
   }
 })();
