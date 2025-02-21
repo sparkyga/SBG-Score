@@ -1,4 +1,8 @@
 - Make a Canvas-like editing style that lets you make hypthetical grades
-- Couple this with hypothetical grades 
-
 What i mean if add a hypothetical grade feature that lets you do smth like see what your grade would be if you got a 10 on your reassesment, so that you have make a grade improvement plan
+
+-let the midterm score save
+
+-add a button to a direct link to the reassesment page
+
+-
